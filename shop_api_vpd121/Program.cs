@@ -1,3 +1,5 @@
+using BusinessLogic.Interfaces;
+using BusinessLogic.Services;
 using Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +15,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ShopDbContext>(x => x.UseSqlServer(connStr));
+
+// configure custom services
+builder.Services.AddScoped<IProductsService, ProductsService>();
 
 var app = builder.Build();
 

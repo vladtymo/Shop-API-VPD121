@@ -1,4 +1,5 @@
-﻿using Data;
+﻿using BusinessLogic.Interfaces;
+using Data;
 using Data.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -9,11 +10,11 @@ namespace shop_api_vpd121.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly ShopDbContext context;
+        private readonly IProductsService productsService;
 
-        public ProductsController(ShopDbContext context)
+        public ProductsController(IProductsService productsService)
         {
-            this.context = context;
+            this.productsService = productsService;
         }
 
         [HttpGet]                       // GET: ~/api/products
@@ -21,20 +22,14 @@ namespace shop_api_vpd121.Controllers
         //[HttpGet("/all-products")]    // GET: ~/all-products
         public IActionResult Get()
         {
-            return Ok(context.Products.ToList());
+            return Ok(productsService.GetAll());
         }
 
         // Details
         [HttpGet("details/{id}")]
         public IActionResult Get(int id)
         {
-            if (id < 0) return BadRequest();
-
-            var product = context.Products.Find(id);
-
-            if (product == null) return NotFound();
-
-            return Ok(product);
+            return Ok(productsService.GetById(id));
         }
 
         [HttpPost]
@@ -42,9 +37,7 @@ namespace shop_api_vpd121.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
 
-            context.Products.Add(product);
-            context.SaveChanges();
-
+            productsService.Create(product);
             return Ok();
         }
 
@@ -53,24 +46,14 @@ namespace shop_api_vpd121.Controllers
         {
             if (!ModelState.IsValid) return BadRequest();
 
-            context.Products.Update(product);
-            context.SaveChanges();
-
+            productsService.Edit(product);
             return Ok();
         }
 
         [HttpDelete]
         public IActionResult Delete(int id)
         {
-            if (id < 0) return BadRequest();
-
-            var product = context.Products.Find(id);
-
-            if (product == null) return NotFound();
-
-            context.Products.Remove(product);
-            context.SaveChanges();
-
+            productsService.Delete(id);
             return Ok();
         }
     }
