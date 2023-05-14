@@ -1,4 +1,5 @@
-﻿using BusinessLogic.Interfaces;
+﻿using BusinessLogic.Dtos;
+using BusinessLogic.Interfaces;
 using Data;
 using Data.Entities;
 using Microsoft.AspNetCore.Http;
@@ -33,7 +34,7 @@ namespace shop_api_vpd121.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create(Product product)
+        public IActionResult Create(ProductDto product)
         {
             if (!ModelState.IsValid) return BadRequest();
 
@@ -42,7 +43,7 @@ namespace shop_api_vpd121.Controllers
         }
 
         [HttpPut]
-        public IActionResult Edit(Product product)
+        public IActionResult Edit(ProductDto product)
         {
             if (!ModelState.IsValid) return BadRequest();
 

@@ -1,6 +1,9 @@
-﻿using BusinessLogic.Interfaces;
+﻿using AutoMapper;
+using BusinessLogic.Dtos;
+using BusinessLogic.Interfaces;
 using Data;
 using Data.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,34 +15,53 @@ namespace BusinessLogic.Services
     public class ProductsService : IProductsService
     {
         private readonly ShopDbContext context;
+        private readonly IMapper mapper;
 
-        public ProductsService(ShopDbContext context)
+        public ProductsService(ShopDbContext context, IMapper mapper)
         {
             this.context = context;
+            this.mapper = mapper;
         }
 
-        public IEnumerable<Product> GetAll()
+        public IEnumerable<ProductDto> GetAll()
         {
-            return context.Products.ToList();
+            var products = context.Products.Include(x => x.Category).ToList();
+            return mapper.Map<IEnumerable<ProductDto>>(products);
         }
 
-        public Product? GetById(int id)
+        public ProductDto? GetById(int id)
         {
             if (id < 0) return null; // Bad Request: 400
             var product = context.Products.Find(id);
 
             if (product == null) return null; // Not Found: 404
-            return product;
+
+            // convert Entity.Product to Product DTO
+            //return new ProductDto
+            //{
+            //    Id = product.Id,
+            //    Name = product.Name,
+            //    Description = product.Description,
+            //    Discount = product.Discount,
+            //    ImageUrl = product.ImageUrl,
+            //    InStock = product.InStock,
+            //    Price = product.Price,
+            //    CategoryId = product.CategoryId,
+            //    CategoryName = product.Category?.Name
+            //};
+
+            // mapping
+            return mapper.Map<ProductDto>(product);
         }
-        public void Create(Product product)
+        public void Create(ProductDto dto)
         {
-            context.Products.Add(product);
+            context.Products.Add(mapper.Map<Product>(dto));
             context.SaveChanges();
         }
 
-        public void Edit(Product product)
+        public void Edit(ProductDto dto)
         {
-            context.Products.Update(product);
+            context.Products.Update(mapper.Map<Product>(dto));
             context.SaveChanges();
         }
         public void Delete(int id)
@@ -48,7 +70,7 @@ namespace BusinessLogic.Services
 
             if (product == null) return; // Not Found: 404
 
-            context.Products.Remove(product);
+            context.Products.Remove(mapper.Map<Product>(product));
             context.SaveChanges();
         }
     }

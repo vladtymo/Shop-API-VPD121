@@ -16,6 +16,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<ShopDbContext>(x => x.UseSqlServer(connStr));
 
+// configure AutoMapper
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
 // configure custom services
 builder.Services.AddScoped<IProductsService, ProductsService>();
 
