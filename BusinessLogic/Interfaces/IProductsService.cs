@@ -15,6 +15,5 @@ namespace BusinessLogic.Interfaces
         void Create(ProductDto product);
         void Edit(ProductDto product);
         void Delete(int id);
-
     }
 }

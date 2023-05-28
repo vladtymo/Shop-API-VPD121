@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using BusinessLogic.ApplicationExceptions;
 using BusinessLogic.Dtos;
 using BusinessLogic.Interfaces;
+using BusinessLogic.Resources;
 using Data;
 using Data.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -31,10 +34,13 @@ namespace BusinessLogic.Services
 
         public ProductDto? GetById(int id)
         {
-            if (id < 0) return null; // Bad Request: 400
+            if (id < 0) 
+                throw new HttpException(ErrorMessages.InvalidId, HttpStatusCode.BadRequest); // Bad Request: 400
+            
             var product = context.Products.Find(id);
 
-            if (product == null) return null; // Not Found: 404
+            if (product == null) 
+                throw new HttpException(ErrorMessages.ProductNotFound, HttpStatusCode.NotFound); // Not Found: 404
 
             // convert Entity.Product to Product DTO
             //return new ProductDto
@@ -66,9 +72,13 @@ namespace BusinessLogic.Services
         }
         public void Delete(int id)
         {
+            if (id < 0) 
+                throw new HttpException(ErrorMessages.InvalidId, HttpStatusCode.BadRequest); // Bad Request: 400
+
             var product = GetById(id);
 
-            if (product == null) return; // Not Found: 404
+            if (product == null) 
+                throw new HttpException(ErrorMessages.ProductNotFound, HttpStatusCode.NotFound); // Not Found: 404
 
             context.Products.Remove(mapper.Map<Product>(product));
             context.SaveChanges();
