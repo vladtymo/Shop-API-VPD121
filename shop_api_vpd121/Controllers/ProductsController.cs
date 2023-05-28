@@ -51,7 +51,7 @@ namespace shop_api_vpd121.Controllers
             return Ok();
         }
 
-        [HttpDelete]
+        [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
             productsService.Delete(id);
