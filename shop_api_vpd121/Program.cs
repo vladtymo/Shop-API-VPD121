@@ -6,7 +6,7 @@ using shop_api_vpd121;
 
 var builder = WebApplication.CreateBuilder(args);
 
-string connStr = builder.Configuration.GetConnectionString("LocalDb");
+string connStr = builder.Configuration.GetConnectionString("AzureDb");
 
 // Add services to the container.
 
